@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="styles/login.css"/>
+
+<script type="text/javascript" src="scripts/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/base64.js"></script>
+<script type="text/javascript" src="scripts/cookie_util.js"></script>
+
+<!-- 将与登录有关的脚本代码提取为一个js文件， 在此处引入进来-->
+<script type="text/javascript" src="scripts/login.js"></script>
+
+
+<script type="text/javascript" >
+	$(function(){
+	
+		//注册按钮单击事件
+		$("#regist_button").click(function(){
+			
+			//清空提示信息
+			$("#warning_1").hide();
+			$("#warning_2").hide();
+			$("#warning_3").hide();
+			$("#warning_4").hide();
+		
+			//获取要提交的数据
+			var username = $("#regist_username").val().trim();
+			var nickname = $("#nickname").val().trim();
+			var password = $("#regist_password").val().trim();
+			var repassword = $("#final_password").val().trim();
+			
+			//检测数据格式
+			var flag = true;  //标志位，数据格式正确才发送ajax请求
+			if(username == ""){
+				$("#warning_1").html("用户名不能为空");
+				$("#warning_1").show();
+				flag = false;
+			}
+			if(nickname == ""){
+				$("#warning_2").html("昵称不能为空");
+				$("#warning_2").show();
+				flag = false;
+			}
+			if(password == ""){
+				$("#warning_3").html("密码不能为空");
+				$("#warning_3").show();
+				flag = false;
+			}
+			if(repassword == ""){
+				$("#warning_4").html("确认密码不能为空");
+				$("#warning_4").show();
+				flag = false;
+			}
+			var bo = false;
+			if( password!=null && repassword!=null && password!=repassword){
+				$("#warning_4").html("两次密码不一致");
+				$("#warning_4").show();
+				flag = false;
+			}
+			
+			//发送ajax请求
+			if(flag){
+				$.ajax({
+				url: "http://localhost:8081/T_Note/user/regist.do",
+				type: "post",
+				data: { "cn_user_name" : username,
+						"cn_user_password" : password,
+						"cn_user_desc" : nickname
+					  },
+				success: function(result){
+					if(result.status==0){//成功
+						alert("注册成功");
+						$("#back").click();  //模拟返回按钮的单机事件
+					}else if(result.status==1){//用户名已存在
+						$("#warning_1").html(result.msg);
+						$("#warning_1").show();
+					}
+				},
+				error: function(){
+					alert("注册失败");
+				}
+				
+			});
+			}
+		});
+	});	
+</script>
+
+</head>
+	<body>
+		<div class="global">
+			<div class="log log_in" tabindex='-1' id='dl'>
+				<dl>
+					<dt>
+						<div class='header'>
+							<h3>登&nbsp;录</h3>
+						</div>
+					</dt>
+					<dt></dt>
+					<dt>
+						<div class='letter'>
+							用户名:&nbsp;<input type="text" name="" id="name" tabindex='1'/>
+							<span id="name_msg"></span>
+						</div>
+					</dt>
+					<dt>
+						<div class='letter'>
+							密&nbsp;&nbsp;&nbsp;码:&nbsp;<input type="password" name="" id="password" tabindex='2'/>
+							<span id="password_msg"></span>
+						</div>
+					</dt>
+					<dt>
+						<div>
+							<input type="button" name="" id="login" value='&nbsp登&nbsp录&nbsp' tabindex='3'/>
+							<input type="button" name="" id="sig_in" value='&nbsp注&nbsp册&nbsp' tabindex='4'/>
+						</div>
+					</dt>
+				</dl>
+			</div>
+			<div class="sig sig_out" tabindex='-1' id='zc' style='visibility:hidden;'>
+				<dl>
+					<dt>
+						<div class='header'>
+							<h3>注&nbsp;册</h3>
+						</div>
+					</dt>
+					<dt></dt>
+					<dt>
+						<div class='letter'>
+							用户名:&nbsp;<input type="text" name="" id="regist_username" tabindex='5'/>
+							<div class='warning' id='warning_1'><span>该用户名不可用</span></div>
+						</div>
+					</dt>
+					<dt>
+						<div class='letter'>
+							昵&nbsp;&nbsp;&nbsp;称:&nbsp;<input type="text" name="" id="nickname" tabindex='6'/>
+							<div class='warning' id='warning_2'><span>该用户名不可用</span></div>
+						</div>
+					</dt>
+					<dt>
+						<div class='letter'>
+							密&nbsp;&nbsp;&nbsp;码:&nbsp;<input type="password" name="" id="regist_password" tabindex='7'/>
+							<div class='warning' id='warning_3'><span>密码长度过短</span></div>
+						</div>
+					</dt>
+					<dt>
+						<div class='password'>
+							&nbsp;&nbsp;&nbsp;确认密码:&nbsp;<input type="password" name="" id="final_password" tabindex='8'/>
+							<div class='warning' id='warning_4'><span>密码输入不一致</span></div>
+							<div class='warning' id='warning_5'><span>密码输入不一致</span></div>
+						</div>
+					</dt>
+					<dt>
+						<div>
+							<input type="button" name="" id="regist_button" value='&nbsp注&nbsp册&nbsp' tabindex='9'/>
+							<input type="button" name="" id="back" value='&nbsp返&nbsp回&nbsp' tabindex='10'/>
+							<script type="text/javascript">
+							function get(e){
+								return document.getElementById(e);
+							}
+							get('sig_in').onclick=function(){
+								get('dl').className='log log_out';
+								get('zc').className='sig sig_in';
+							}
+							get('back').onclick=function(){
+								get('zc').className='sig sig_out';
+								get('dl').className='log log_in';
+							}
+							window.onload=function(){
+								var t =setTimeout("get('zc').style.visibility='visible'",800);
+								get('final_password').onblur=function(){
+									var npassword=get('regist_password').value;
+									var fpassword=get('final_password').value;
+									if(npassword!=fpassword){
+										get('warning_3').style.display='block';
+									}
+								}
+								get('regist_password').onblur=function(){
+									var npassword=get('regist_password').value.length;
+									if(npassword<6&&npassword>0){
+										get('warning_2').style.display='block';
+									}
+								}
+								get('regist_password').onfocus=function(){
+									get('warning_2').style.display='none';
+								}
+								get('final_password').onfocus=function(){
+									get('warning_3').style.display='none';
+								}
+							}
+							</script>
+						</div>
+					</dt>
+				</dl>
+			</div>
+		</div>
+	</body>
+</html>
