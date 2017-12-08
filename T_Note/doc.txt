@@ -10,7 +10,7 @@
 			获取需要发送给服务器的内容
 			格式检查
 			发送ajax请求
-表：
+2.表：
 	cn_user: 与用户登录注册有关
 	cn_notebook: 笔记本表
 	cn_note: 笔记表
@@ -19,13 +19,13 @@
 		状态字段：做增删改查时，只需要修改状态值就行。
 	cn_share：查询笔记，查询是针对分享过的笔记做查询
 	
-实现过程：
+3.实现过程：
 	1. 搭建环境：建工程，导jar包，配置文件
 	2. 用户表 DAO，service，controller
 	3. 用户的登录
 		Http Basic Authentication模式传输，保证用户名密码的安全性
-遇到错误：
+4.遇到错误：
 	1.在Controller中获取页面值：
 		Controller方法中省略了@RequestParameter注解，却没有将方法括号中的参数与页面
 		的参数保持一致，所以就没有获取到数值 
-登陆：http://localhost:8081/log_in.html
+5.登陆：http://localhost:8081/log_in.html
